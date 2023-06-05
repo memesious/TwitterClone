@@ -1,0 +1,46 @@
+plugins {
+    id 'groovy'
+    id 'org.springframework.boot' version '2.7.6'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'org.graalvm.buildtools.native' version '0.9.20'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.codehaus.groovy:groovy-all:3.0.17'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client:2.7.6'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:2.7.6'
+
+
+//    implementation 'org.keycloak:keycloak-spring-boot-adapter:18.0.2'
+//    implementation 'org.keycloak:keycloak-adapter-core:21.1.1'
+//    implementation 'org.keycloak:keycloak-spring-security-adapter:21.1.1'
+    implementation("org.keycloak:keycloak-spring-boot-starter:16.1.1")
+
+
+
+
+    compileOnly 'org.projectlombok:lombok'
+//    developmentOnly 'org.springframework.boot:spring-boot-docker-compose:2.7.6'
+    annotationProcessor 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
