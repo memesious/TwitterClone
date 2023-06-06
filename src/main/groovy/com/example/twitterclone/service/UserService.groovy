@@ -4,6 +4,7 @@ import com.example.twitterclone.converter.UserConverter
 import com.example.twitterclone.document.UserDocument
 import com.example.twitterclone.dto.UserDto
 import com.example.twitterclone.repository.UserRepository
+import com.example.twitterclone.util.KeycloakUtil
 import lombok.RequiredArgsConstructor
 import org.springframework.stereotype.Service
 
@@ -30,5 +31,27 @@ class UserService {
         UserDocument userDocument = userConverter.toDocument(user)
         UserDocument savedUser = userRepository.insert(userDocument)
         return userConverter.documentToDto(savedUser)
+    }
+
+    UserDto updateAccount(UserDto dto){
+        String keycloakId = KeycloakUtil.getCurrentKeycloakIdOrThrow()
+        UserDocument user = userRepository.findById(keycloakId)
+                //if data not found but keycloak id is exist, sawing new data
+                .orElse(new UserDocument())
+
+        UserDocument updatedUser = userConverter.updateDocument(user, dto)
+
+        return userConverter.documentToDto(userRepository.save(updatedUser))
+    }
+
+    void subscribe(String username){
+        String keycloakId = KeycloakUtil.currentKeycloakIdOrThrow
+        UserDocument subscriptionUser = userRepository.findByUsername(username).orElseThrow()
+        UserDocument currentUser = userRepository.findById(keycloakId).orElseThrow()
+        if (!currentUser.subscriptions.contains(subscriptionUser)){
+            currentUser.subscriptions.add(subscriptionUser)
+        }
+        userRepository.save(currentUser)
+
     }
 }

@@ -5,7 +5,9 @@ import com.example.twitterclone.service.KeycloakService
 import com.example.twitterclone.service.UserService
 import com.example.twitterclone.util.KeycloakUtil
 import lombok.RequiredArgsConstructor
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -24,4 +26,15 @@ class UserController {
     String register(@RequestBody UserDto userDto) {
         return userService.register(userDto)
     }
+
+    @PutMapping("/update")
+    String update(@RequestBody UserDto userDto) {
+        return userService.updateAccount(userDto)
+    }
+
+    @PostMapping("/subscribe/{username}")
+    void subscribe(@PathVariable String username) {
+        userService.subscribe(username)
+    }
+
 }
