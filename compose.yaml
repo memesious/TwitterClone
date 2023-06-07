@@ -31,6 +31,10 @@ services:
       - 8080:8080
     depends_on:
       - postgres
+    command:
+      - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
+    volumes:
+      - ./realm-export.json:/opt/jboss/keycloak/realm-export.json
 
   mongodb:
 #    image: mongodb/mongodb-community-server:6.0-ubi8

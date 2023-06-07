@@ -55,7 +55,13 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/users/register/**").permitAll()
-                .anyRequest().fullyAuthenticated();
+                .anyRequest().fullyAuthenticated()
+                .and().headers().frameOptions().disable()
+
+    }
+    @Override
+    void configure(WebSecurity web) {
+        web.ignoring().antMatchers("/users/register");
     }
 
     @Bean
@@ -68,4 +74,5 @@ class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
                 .clientSecret(properties.getCredentials().get("secret").toString())
                 .build();
     }
+
 }
