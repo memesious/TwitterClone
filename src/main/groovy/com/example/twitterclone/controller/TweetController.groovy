@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -25,7 +24,12 @@ class TweetController {
 
     @GetMapping()
     List<TweetResponseDto> feed(){
-        //todo
+        return tweetService.getFeed()
+    }
+
+    @GetMapping("/{username}")
+    List<TweetResponseDto> userFeed(@PathVariable String username){
+        return tweetService.getUserFeed(username)
     }
 
     @PostMapping()

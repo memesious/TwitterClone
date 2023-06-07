@@ -22,10 +22,10 @@ class UserService {
         this.userRepository = userRepository
     }
 
-    UserDto register(UserDto dto){
+    UserDto register(UserDto dto) {
 
         UserDto user = keycloakService.registerUser(dto)
-        if (user == null || user.keycloakId == null){
+        if (user == null || user.keycloakId == null) {
             throw new RuntimeException("Error happened during user registration!")
         }
         UserDocument userDocument = userConverter.toDocument(user)
@@ -33,10 +33,10 @@ class UserService {
         return userConverter.documentToDto(savedUser)
     }
 
-    UserDto updateAccount(UserDto dto){
+    UserDto updateAccount(UserDto dto) {
         String keycloakId = KeycloakUtil.getCurrentKeycloakIdOrThrow()
         UserDocument user = userRepository.findById(keycloakId)
-                //if data not found but keycloak id is exist, sawing new data
+        //if data not found but keycloak id is exist, sawing new data
                 .orElse(new UserDocument())
 
         UserDocument updatedUser = userConverter.updateDocument(user, dto)
@@ -44,14 +44,33 @@ class UserService {
         return userConverter.documentToDto(userRepository.save(updatedUser))
     }
 
-    void subscribe(String username){
+    void subscribe(String username) {
         String keycloakId = KeycloakUtil.currentKeycloakIdOrThrow
         UserDocument subscriptionUser = userRepository.findByUsername(username).orElseThrow()
         UserDocument currentUser = userRepository.findById(keycloakId).orElseThrow()
-        if (!currentUser.subscriptions.contains(subscriptionUser)){
-            currentUser.subscriptions.add(subscriptionUser)
-        }
-        userRepository.save(currentUser)
 
+        boolean isInSubscriptions = currentUser.subscriptions.stream()
+                .map { subscriber -> subscriber.username }
+                .anyMatch { subscriberUsername -> subscriberUsername == username }
+
+        if (!isInSubscriptions) {
+            currentUser.subscriptions.add(subscriptionUser)
+            userRepository.save(currentUser)
+        }
+    }
+
+    void unSubscribe(String username) {
+        String keycloakId = KeycloakUtil.currentKeycloakIdOrThrow
+        UserDocument subscriptionUser = userRepository.findByUsername(username).orElseThrow()
+        UserDocument currentUser = userRepository.findById(keycloakId).orElseThrow()
+
+        boolean isInSubscriptions = currentUser.subscriptions.stream()
+                .map { subscriber -> subscriber.username }
+                .anyMatch { subscriberUsername -> subscriberUsername == username }
+
+        if (isInSubscriptions) {
+            currentUser.subscriptions.removeIf { subscriber -> subscriber.keycloakId == subscriptionUser.keycloakId }
+            userRepository.save(currentUser)
+        }
     }
 }

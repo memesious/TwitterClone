@@ -11,7 +11,6 @@ import java.time.LocalDateTime
 class TweetDocument {
 
     @Id
-    @Indexed(unique = true)
     String id;
 
     String text
@@ -21,6 +20,13 @@ class TweetDocument {
     @DBRef
     UserDocument creator
 
+    String creatorId
+
     @DBRef
     List<UserDocument> likeList
+
+    void setCreator(UserDocument creator){
+        this.creator = creator
+        this.creatorId = creator.keycloakId
+    }
 }

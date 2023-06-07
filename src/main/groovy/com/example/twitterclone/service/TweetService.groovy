@@ -26,6 +26,26 @@ class TweetService {
         this.tweetConverter = tweetConverter
     }
 
+    List<TweetResponseDto> getFeed() {
+        String currentKeycloakId = KeycloakUtil.currentKeycloakIdOrThrow
+        List<String> subscriptions = userRepository.findById(currentKeycloakId)
+                .map { user ->
+                    user.subscriptions.stream()
+                            .map { subscription -> subscription.keycloakId }
+                            .collect(Collectors.toList())
+                }
+                .orElseThrow()
+        subscriptions.add(currentKeycloakId)
+        List<TweetDocument> tweetDocumentList = tweetRepository.findAllByCreatorIdIn(subscriptions)
+        return tweetConverter.toResponseDtoList(tweetDocumentList)
+    }
+
+    List<TweetResponseDto> getUserFeed(String username){
+        UserDocument creator = userRepository.findByUsername(username).orElseThrow()
+        List<TweetDocument> usersPosts = tweetRepository.findAllByCreatorIdIn(List.of(creator.keycloakId))
+        return tweetConverter.toResponseDtoList(usersPosts)
+    }
+
     TweetResponseDto createTweet(String text) {
         String keycloakId = KeycloakUtil.getCurrentKeycloakIdOrThrow()
         UserDocument creator = userRepository.findById(keycloakId).orElseThrow()

@@ -2,7 +2,10 @@ package com.example.twitterclone.converter
 
 import com.example.twitterclone.document.TweetDocument
 import com.example.twitterclone.dto.TweetResponseDto
+import com.example.twitterclone.util.KeycloakUtil
 import org.springframework.stereotype.Component
+
+import java.util.stream.Collectors
 
 @Component
 class TweetConverter {
@@ -11,6 +14,15 @@ class TweetConverter {
 
     TweetConverter(UserConverter userConverter) {
         this.userConverter = userConverter
+    }
+
+    List<TweetResponseDto> toResponseDtoList(Collection tweetDocumentList) {
+        if (tweetDocumentList == null) {
+            return null
+        }
+        return tweetDocumentList.stream()
+                .map { tweet->toResponseDto(tweet) }
+                .collect(Collectors.toList())
     }
 
     TweetResponseDto toResponseDto(TweetDocument tweetDocument) {
@@ -27,4 +39,5 @@ class TweetConverter {
         dto.setLikeAmount(likeAmount == null ? 0 : likeAmount.size())
         dto
     }
+
 }
