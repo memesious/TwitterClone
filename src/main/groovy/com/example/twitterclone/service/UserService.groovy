@@ -73,4 +73,10 @@ class UserService {
             userRepository.save(currentUser)
         }
     }
+
+    void deleteAccount(){
+        String currentKeycloakId = KeycloakUtil.getCurrentKeycloakIdOrThrow()
+        keycloakService.deleteUser(currentKeycloakId)
+        userRepository.deleteById(currentKeycloakId)
+    }
 }

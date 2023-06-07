@@ -3,6 +3,7 @@ package com.example.twitterclone.service
 import com.example.twitterclone.converter.UserConverter
 import com.example.twitterclone.document.UserDocument
 import com.example.twitterclone.dto.UserDto
+import com.example.twitterclone.util.KeycloakUtil
 import groovy.util.logging.Slf4j
 import lombok.RequiredArgsConstructor
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties
@@ -87,5 +88,9 @@ class KeycloakService {
         final RoleScopeResource roleScopeResource = userResource.roles().clientLevel(clientRepresentation.getId());
         roleScopeResource.remove(roleScopeResource.listAll());
         roleScopeResource.add(keycloakRoles);
+    }
+
+    void deleteUser(String keycloakId){
+        usersResource.get(keycloakId).remove()
     }
 }
